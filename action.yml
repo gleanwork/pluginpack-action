@@ -1,0 +1,64 @@
+name: pluginpack-action
+description: >-
+  Build a pluginpack source repo for one target and sync the generated output
+  into a published plugin repo by opening a pull request. Never pushes to the
+  output repo's default branch.
+author: Glean
+branding:
+  icon: package
+  color: blue
+
+inputs:
+  target:
+    description:
+      'The pluginpack target to build (e.g. claude, cursor, antigravity,
+      copilot).'
+    required: true
+  output-repo:
+    description: 'The published repo to sync into, as "owner/name".'
+    required: true
+  output-ref:
+    description: 'Base branch in the output repo that the sync PR targets.'
+    required: false
+    default: main
+  token:
+    description: >-
+      Token with contents:write and pull-requests:write on the output repo.
+      Prefer a GitHub App installation token scoped to the output repos.
+    required: true
+  mode:
+    description: >-
+      "sync" (default) builds and opens/updates a PR when the output is stale.
+      "check" only verifies the output is current and fails the job if it is
+      not.
+    required: false
+    default: sync
+  pluginpack-version:
+    description: 'npm version/dist-tag of @gleanwork/pluginpack to run.'
+    required: false
+    default: latest
+  working-directory:
+    description: 'Path to the checked-out pluginpack source repo.'
+    required: false
+    default: '.'
+  pr-branch-prefix:
+    description:
+      'Prefix for the machine-owned sync branch; the target is appended.'
+    required: false
+    default: pluginpack/sync
+  pr-labels:
+    description: 'Comma-separated labels to apply to the sync PR.'
+    required: false
+    default: pluginpack-sync
+
+outputs:
+  stale:
+    description: '"true" when the output repo differed from a fresh build.'
+  pr-number:
+    description: 'Number of the opened or updated sync PR (sync mode only).'
+  pr-url:
+    description: 'HTML URL of the opened or updated sync PR (sync mode only).'
+
+runs:
+  using: node24
+  main: dist/index.js
