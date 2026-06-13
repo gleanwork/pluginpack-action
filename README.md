@@ -39,7 +39,7 @@ jobs:
       cancel-in-progress: true
     steps:
       # Mint a short-lived token scoped only to the output repo.
-      - uses: actions/create-github-app-token@v2
+      - uses: actions/create-github-app-token@v3
         id: app-token
         with:
           app-id: ${{ secrets.PLUGINPACK_APP_ID }}
