@@ -57,9 +57,53 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
 ```
 
-Use a GitHub App installation token (via `actions/create-github-app-token`)
-scoped to the output repos for least privilege; a PAT with `contents:write` +
-`pull-requests:write` on the output repo also works.
+## Authentication
+
+The action needs a token with **`contents: write`** and
+**`pull_requests: write`** on each output repo — to push the machine-owned sync
+branch and open the PR. It never needs write access to the source repo. Provide
+it one of two ways.
+
+### GitHub App (recommended)
+
+Short-lived, least-privilege, and not tied to a person.
+
+1. Create a GitHub App in the org (**Settings → Developer settings → GitHub Apps
+   → New**). Under **Repository permissions** grant **Contents: Read and write**
+   and **Pull requests: Read and write**. No webhook needed.
+2. **Install** the App on the output repos (e.g. `claude-plugins`,
+   `cursor-plugins`).
+3. In the **source** repo (where this action runs) add:
+   - an Actions **variable** `PLUGINPACK_APP_ID` — the App's numeric App ID;
+   - an Actions **secret** `PLUGINPACK_APP_KEY` — a generated private key (the
+     full `.pem` contents).
+4. Mint a per-run token with `actions/create-github-app-token`, scoped to just
+   the target output repo, and pass it to `token` (see [Usage](#usage)).
+
+The variable/secret names are arbitrary — match them to whatever your
+`create-github-app-token` step references.
+
+### Personal access token (simpler)
+
+A fine-grained **PAT** with **Contents: Read and write** and **Pull requests:
+Read and write** on the output repos, stored as a secret. Drop the app-token
+step and pass the secret straight through:
+
+```yaml
+steps:
+  - uses: actions/checkout@v5
+  - uses: actions/setup-node@v5
+    with:
+      node-version-file: .node-version
+  - uses: gleanwork/pluginpack-action@v1
+    with:
+      target: claude
+      output-repo: gleanwork/claude-plugins
+      token: ${{ secrets.PLUGINPACK_SYNC_TOKEN }}
+```
+
+A PAT is tied to its creator and longer-lived than an App token — rotate it
+periodically.
 
 ## Inputs
 
