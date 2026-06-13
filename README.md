@@ -73,15 +73,16 @@ Short-lived, least-privilege, and not tied to a person.
    and **Pull requests: Read and write**. No webhook needed.
 2. **Install** the App on the output repos (e.g. `claude-plugins`,
    `cursor-plugins`).
-3. In the **source** repo (where this action runs) add:
-   - an Actions **variable** `PLUGINPACK_APP_ID` — the App's numeric App ID;
-   - an Actions **secret** `PLUGINPACK_APP_KEY` — a generated private key (the
-     full `.pem` contents).
+3. In the **source** repo (where this action runs) add two Actions **secrets**:
+   - `PLUGINPACK_APP_ID` — the App's numeric App ID;
+   - `PLUGINPACK_APP_KEY` — a generated private key (the full `.pem` contents).
 4. Mint a per-run token with `actions/create-github-app-token`, scoped to just
    the target output repo, and pass it to `token` (see [Usage](#usage)).
 
-The variable/secret names are arbitrary — match them to whatever your
-`create-github-app-token` step references.
+The App ID isn't sensitive, so a repo **variable** works for it too; we keep
+both as secrets so all App credentials live in one place. The names are
+arbitrary — match them to whatever your `create-github-app-token` step
+references.
 
 ### Personal access token (simpler)
 
