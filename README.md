@@ -42,14 +42,14 @@ jobs:
       - uses: actions/create-github-app-token@v2
         id: app-token
         with:
-          app-id: ${{ vars.PLUGINPACK_APP_ID }}
+          app-id: ${{ secrets.PLUGINPACK_APP_ID }}
           private-key: ${{ secrets.PLUGINPACK_APP_KEY }}
           owner: gleanwork
           repositories: claude-plugins
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
         with:
-          node-version-file: .node-version
+          node-version: 24
       - uses: gleanwork/pluginpack-action@v1
         with:
           target: claude
