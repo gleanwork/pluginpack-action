@@ -42,7 +42,7 @@ jobs:
       - uses: actions/create-github-app-token@v3
         id: app-token
         with:
-          app-id: ${{ secrets.PLUGINPACK_APP_ID }}
+          client-id: ${{ secrets.PLUGINPACK_CLIENT_ID }}
           private-key: ${{ secrets.PLUGINPACK_APP_KEY }}
           owner: gleanwork
           repositories: claude-plugins
@@ -74,12 +74,14 @@ Short-lived, least-privilege, and not tied to a person.
 2. **Install** the App on the output repos (e.g. `claude-plugins`,
    `cursor-plugins`).
 3. In the **source** repo (where this action runs) add two Actions **secrets**:
-   - `PLUGINPACK_APP_ID` — the App's numeric App ID;
+   - `PLUGINPACK_CLIENT_ID` — the App's **Client ID** (on the App's General
+     page, e.g. `Iv23li…`). `create-github-app-token` v3 uses `client-id`; the
+     numeric App ID is deprecated.
    - `PLUGINPACK_APP_KEY` — a generated private key (the full `.pem` contents).
 4. Mint a per-run token with `actions/create-github-app-token`, scoped to just
    the target output repo, and pass it to `token` (see [Usage](#usage)).
 
-The App ID isn't sensitive, so a repo **variable** works for it too; we keep
+The Client ID isn't sensitive, so a repo **variable** works for it too; we keep
 both as secrets so all App credentials live in one place. The names are
 arbitrary — match them to whatever your `create-github-app-token` step
 references.
